@@ -5,31 +5,29 @@ sudo: required
 branches:
   only:
     - master
-  
-# Setup two jobs, one for each targeted platform
-matrix:
-  include:
-    - env: TARGET=x86_64-unknown-linux-gnu
-    - env: TARGET=i686-unknown-linux-gnu
 
 # Install tools for running tests
 install:
   - cargo install cross
-
-# Run tests
-script: cross test --target $TARGET
-
-# Build and compress release
-before_deploy:
-  - cross build --release --target $TARGET
-  - cp target/$TARGET/release/travis-docker-demo .
-  - tar czf travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz travis-docker-demo
-  - TRAVIS_TAG=build-$TRAVIS_BUILD_NUMBER
-
-# Deploy to GitHub releases
-deploy:
-  api_key:
-    secure: "WDvWVMjtm2Z1f8dFic0N9GdAkZU+bSOCzpS3PAJVWUi+hzFnSot+aLH8d3s82QMyJ8XrB3c2WFRnRtgjzviaCYQRlhBIYzBc9NY5lKbDg/FFrVzETpMuhhktwWH8Xmu7uMoNGLFHREi6wmrrq5VIlPlrdlVUWbWblRMlT2YsYJsV484fu6c+2gJEHYzqpzMV/6y3P/6k1eghRODg9HPBcRfAKl4pTv7OZS5jOZVCkag7yI8R2vSgjCfFKhGlg67dik6yjc4IATmSc1SFtX1ZjjonvxtHPz4pvB6LV7CLYqRRMdlUZddd0hEsDvao8zZIupHG1seu9kdAUpM3cgtekbuza69l/mpTD0tT9U8QsdZMM0JbxE7jgsmAdWNYzrnC8Y4vYzXLKsRntgxg5THuRE5Kuz+B4TUSQVkhf5fGhmDXY8ATbpSxJQMKdgkHNkovJwvPnVFt7OZNz/KehdYtU2r4vf1uzeobCw6Yx0qq4kk/GPPZxJift1XXWpQiNvp8rUrTT0fwmjd4acCIbB3+xTeTQvm6ViUiIWxJZ9WSGEmdkzP+KC17cR1ltpuIuxYUMXwGtnbYRoChWVYfyvg1vyKM3pTw+h/mc89yJkUCF9YGCYh0ByLLRxzkCy3sjOOu5zItd5ZoHqLL9v9Ji8s99EH2T3Hx1gV4VRDSzHNmhw0="
-  file: travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz
-  provider: releases
-  skip_cleanup: true
+  
+# Setup two jobs, one for each targeted platform
+env:
+  - TARGET=x86_64-unknown-linux-gnu
+  - TARGET=i686-unknown-linux-gnu
+jobs:
+  include:
+    - stage: test
+      script: cross test --target $TARGET
+    - stage: deploy
+      script: skip
+      before_deploy:
+        - cross build --release --target $TARGET
+        - cp target/$TARGET/release/travis-docker-demo .
+        - tar czf travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz travis-docker-demo
+        - TRAVIS_TAG=build-$TRAVIS_BUILD_NUMBER
+      deploy:
+        api_key:
+          secure: "WDvWVMjtm2Z1f8dFic0N9GdAkZU+bSOCzpS3PAJVWUi+hzFnSot+aLH8d3s82QMyJ8XrB3c2WFRnRtgjzviaCYQRlhBIYzBc9NY5lKbDg/FFrVzETpMuhhktwWH8Xmu7uMoNGLFHREi6wmrrq5VIlPlrdlVUWbWblRMlT2YsYJsV484fu6c+2gJEHYzqpzMV/6y3P/6k1eghRODg9HPBcRfAKl4pTv7OZS5jOZVCkag7yI8R2vSgjCfFKhGlg67dik6yjc4IATmSc1SFtX1ZjjonvxtHPz4pvB6LV7CLYqRRMdlUZddd0hEsDvao8zZIupHG1seu9kdAUpM3cgtekbuza69l/mpTD0tT9U8QsdZMM0JbxE7jgsmAdWNYzrnC8Y4vYzXLKsRntgxg5THuRE5Kuz+B4TUSQVkhf5fGhmDXY8ATbpSxJQMKdgkHNkovJwvPnVFt7OZNz/KehdYtU2r4vf1uzeobCw6Yx0qq4kk/GPPZxJift1XXWpQiNvp8rUrTT0fwmjd4acCIbB3+xTeTQvm6ViUiIWxJZ9WSGEmdkzP+KC17cR1ltpuIuxYUMXwGtnbYRoChWVYfyvg1vyKM3pTw+h/mc89yJkUCF9YGCYh0ByLLRxzkCy3sjOOu5zItd5ZoHqLL9v9Ji8s99EH2T3Hx1gV4VRDSzHNmhw0="
+        file: travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz
+        provider: releases
+        skip_cleanup: true
