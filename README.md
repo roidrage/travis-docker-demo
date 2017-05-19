@@ -1,1 +1,1 @@
-# Building a binary release for multiple platforms with Travis & Docker
+# Building a multi-platform release with Travis & Docker
