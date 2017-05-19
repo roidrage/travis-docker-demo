@@ -19,7 +19,9 @@ script: cross test --target $TARGET
 # Build and compress release
 before_deploy:
   - cross build --release --target $TARGET
-  - tar czf travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz target/$TARGET/release/travis-docker-demo
+  - cp target/$TARGET/release/travis-docker-demo .
+  - tar czf travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz travis-docker-demo
+  - TRAVIS_TAG=build-$TRAVIS_BUILD_NUMBER
 
 # Deploy to GitHub releases
 deploy:
