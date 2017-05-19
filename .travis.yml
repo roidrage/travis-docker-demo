@@ -2,6 +2,9 @@ language: rust
 dist: trusty
 services: docker
 sudo: required
+branches:
+  only:
+    - master
   
 # Setup two jobs, one for each targeted platform
 matrix:
@@ -11,8 +14,6 @@ matrix:
 
 # Install tools for running tests
 install:
-  #- curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $TRAVIS_RUST_VERSION
-  - source ~/.cargo/env
   - cargo install cross
 
 # Run tests
