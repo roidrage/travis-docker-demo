@@ -9,7 +9,7 @@ fn check() -> bool {
 
 #[cfg(not(target_arch = "x86_64"))]
 fn check() -> bool {
-    std::mem::size_of::<usize>() == 4
+    std::mem::size_of::<usize>() == 8
 }
 
 #[test]
