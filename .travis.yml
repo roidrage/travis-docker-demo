@@ -11,14 +11,17 @@ install:
   - cargo install cross
   
 # Setup two jobs, one for each targeted platform
-env:
-  - TARGET=x86_64-unknown-linux-gnu
-  - TARGET=i686-unknown-linux-gnu
 jobs:
   include:
-    - stage: test
+    - &test
+      stage: test
       script: cross test --target $TARGET
-    - stage: deploy
+      env: TARGET=x86_64-unknown-linux-gnu
+    - <<: *test
+      env: TARGET=i686-unknown-linux-gnu
+    - &deploy
+      stage: deploy
+      env: TARGET=x86_64-unknown-linux-gnu
       script: skip
       before_deploy:
         - cross build --release --target $TARGET
@@ -31,3 +34,5 @@ jobs:
         file: travis-docker-demo-$TARGET-$TRAVIS_BUILD_NUMBER.tar.gz
         provider: releases
         skip_cleanup: true
+    - <<: *deploy
+      env: TARGET=i686-unknown-linux-gnu
