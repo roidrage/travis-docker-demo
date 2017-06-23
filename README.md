@@ -1,3 +1,4 @@
+Travis CI: [![Build Status](https://travis-ci.org/roidrage/travis-docker-demo.svg?branch=master)](https://travis-ci.org/roidrage/travis-docker-demo)
 # Building a multi-platform release with Travis & Docker
 
 This repo demonstrates how to test a Rust binary on multiple targeted platforms, and if the tests pass, release it to GitHub Releases.
